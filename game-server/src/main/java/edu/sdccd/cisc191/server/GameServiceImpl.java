@@ -45,7 +45,7 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
         );
 
         matches.put(matchId, match);
-        statistics.recordJoin();
+        statistics.recordJoin(difficulty, ranked);
 
         JoinMatchResponse response = JoinMatchResponse.newBuilder()
                 .setMatchId(matchId)
@@ -53,6 +53,7 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
                 .setOpponentName(match.opponentName())
                 .setMessage("Joined " + match.matchType() + " match " + matchId
                         + " on " + difficulty + " difficulty. Click Play Match to let the server choose a winner.")
+                .setSummary(buildJoinSummary(matchId, match.playerName, match.opponentName, difficulty, ranked))
                 .build();
 
         responseObserver.onNext(response);
@@ -60,9 +61,8 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
     }
 
     /**
-     * TODO 6: Complete this server-side summary helper, then use it in JoinMatchResponse
+     * Complete this server-side summary helper, then use it in JoinMatchResponse
      * after adding the new summary field to the .proto file.
-     *
      * Expected format:
      * Match match-001: Ada vs Bot (Hard, ranked)
      *
@@ -80,7 +80,25 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
             String difficulty,
             boolean ranked
     ) {
-        return "TODO: build join summary";
+        if (matchId == null || matchId.isBlank()) {
+            matchId = "No match";
+        }
+        if (playerName == null || playerName.isBlank()) {
+            playerName = "Player";
+        }
+        if (opponentName == null || opponentName.isBlank()) {
+            opponentName = "Bot";
+        }
+        if (difficulty == null || difficulty.isBlank()) {
+            difficulty = "Normal";
+        }
+        String matchType = ranked ? "Ranked" : "Casual";
+
+        return "Match " + matchId + ": "
+                + playerName + " vs "
+                + opponentName + " ("
+                + difficulty + ", "
+                + matchType + ")";
     }
 
     @Override

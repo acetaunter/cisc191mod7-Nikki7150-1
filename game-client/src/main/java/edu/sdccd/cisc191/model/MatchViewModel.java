@@ -1,5 +1,7 @@
 package edu.sdccd.cisc191.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class MatchViewModel {
     private String matchId;
     private final Player player = new Player("Player");
@@ -7,9 +9,9 @@ public class MatchViewModel {
     private boolean matchOver;
     private String winnerName = "";
 
-    // TODO 7: Make this shared counter thread-safe.
+    // Make this shared counter thread-safe.
     // Use either an AtomicInteger field or synchronized methods so background tasks cannot lose updates.
-    private int completedMatchCount = 0;
+    private final AtomicInteger completedMatchCount = new AtomicInteger(0);
 
     public String getMatchId() {
         return matchId;
@@ -44,11 +46,11 @@ public class MatchViewModel {
     }
 
     public int getCompletedMatchCount() {
-        return completedMatchCount;
+        return completedMatchCount.get();
     }
 
     /**
-     * TODO 7: Complete this method using thread-safe programming.
+     * Complete this method using thread-safe programming.
      *
      * This model may be updated after JavaFX background tasks finish. Make sure concurrent
      * calls do not lose completed-match updates. You may use synchronized methods or an
@@ -61,7 +63,7 @@ public class MatchViewModel {
      * - Protect shared state from race conditions.
      */
     public void recordCompletedMatchThreadSafely(String winnerName) {
-        completedMatchCount = completedMatchCount + 1;
+        completedMatchCount.incrementAndGet();
         setWinnerName(winnerName);
         matchOver = true;
     }
@@ -75,7 +77,7 @@ public class MatchViewModel {
     }
 
     /**
-     * TODO 2: Complete this MVC helper.
+     * Complete this MVC helper.
      *
      * Return a short summary for the bottom of the JavaFX screen.
      * Expected format:
@@ -88,7 +90,20 @@ public class MatchViewModel {
      * - Use "ranked" when ranked is true, otherwise "casual".
      */
     public String buildMatchSummary(String difficulty, boolean ranked) {
-        return "TODO: build match summary";
+        if (matchId == null && matchId.isBlank()) {
+            return "No match found";
+        }
+        if (difficulty == null && difficulty.isBlank()) {
+            return "Normal";
+        }
+
+        String matchType = ranked ? "ranked" : "casual";
+
+        return "Match" + matchId + ": "
+                + player.getName() + " vs "
+                + opponent.getName() + " ("
+                + difficulty + ", "
+                + matchType + ")";
     }
 
     public void resetLocalState() {
@@ -97,6 +112,6 @@ public class MatchViewModel {
         opponent.setName("Opponent");
         matchOver = false;
         winnerName = "";
-        completedMatchCount = 0;
+        completedMatchCount.set(0);
     }
 }

@@ -53,6 +53,7 @@
                 <Label fx:id="playerLabel" text="Player: Player" />
                 <Label fx:id="opponentLabel" text="Opponent: Opponent" />
                 <Label fx:id="winnerLabel" text="Winner: TBD" />
+                <Label fx:id="matchSummaryLabel" text="Summary: No match" />
             </HBox>
 
             <HBox spacing="10">

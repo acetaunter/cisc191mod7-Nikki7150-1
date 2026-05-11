@@ -64,9 +64,7 @@ public class GameController {
         boolean ranked = rankedMatchCheckBox.isSelected();
 
         statusLabel.setText("Status: Joining match...");
-        matchLog.appendText("Joining " + (ranked ? "ranked" : "casual")
-                + " match as " + playerName
-                + " on " + difficulty + " difficulty...\n");
+        matchLog.appendText(buildJoinLogMessage(playerName, difficulty, ranked));
 
         Task<JoinMatchResponse> task = grpcClient.joinMatchTask(
                 playerName,
@@ -197,7 +195,7 @@ public class GameController {
     }
 
     /**
-     * TODO 3: Complete this controller helper.
+     * Complete this controller helper.
      *
      * Return exactly:
      * Joining ranked match as Ada on Hard difficulty...
@@ -210,11 +208,23 @@ public class GameController {
      * - Trim playerName and difficulty.
      */
     public static String buildJoinLogMessage(String playerName, String difficulty, boolean ranked) {
-        return "TODO: build join log message";
+        if(playerName == null || playerName.isBlank()) {
+            playerName =  "Player";
+        }
+        if(difficulty == null || difficulty.isBlank()) {
+            difficulty =  "Normal";
+        }
+
+        String matchType = ranked ? "ranked" : "casual";
+
+        return "Joining "
+                + matchType + " match as "
+                + playerName.trim() + " on "
+                + difficulty.trim() + " difficulty...";
     }
 
     /**
-     * TODO 8: Complete this helper so UI updates are safe from any thread.
+     * Complete this helper so UI updates are safe from any thread.
      *
      * JavaFX controls must be changed on the JavaFX Application Thread.
      * Requirements:
@@ -223,9 +233,16 @@ public class GameController {
      * - Otherwise, schedule it with Platform.runLater(action).
      */
     public static void runOnFxThread(Runnable action) {
-        if (action != null) {
+        if (action == null) {
+            return;
+        }
+        if (Platform.isFxApplicationThread()) {
             action.run();
         }
+        else {
+            Platform.runLater(action);
+        }
+
     }
 
     private void runInBackground(Task<?> task) {
