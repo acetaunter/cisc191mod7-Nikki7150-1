@@ -20,11 +20,6 @@ public class MatchStatistics {
     /**
      * Make this update thread-safe.
      */
-
-    public void recordJoin() {
-        recordJoin("Normal", false);
-    }
-
     public void recordJoin(String difficulty, boolean ranked) {
         joinedMatchCount.incrementAndGet();
 
@@ -83,5 +78,9 @@ public class MatchStatistics {
         return "Server stats: "
                 + joinedMatchCount.get() + " joined, "
                 + completedMatchCount.get() + " completed.";
+    }
+
+    public void  recordJoin() {
+        joinedMatchCount.incrementAndGet();
     }
 }
