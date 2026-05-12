@@ -20,21 +20,7 @@ public class MatchStatistics {
     /**
      * Make this update thread-safe.
      */
-    public void recordJoin(String difficulty, boolean ranked) {
-        joinedMatchCount.incrementAndGet();
-
-        if (ranked) {
-            rankedJoinCount.incrementAndGet();
-        }
-        else {
-            casualJoinCount.incrementAndGet();
-        }
-
-        difficultyMap
-                .computeIfAbsent(difficulty == null ? "Unknown" : difficulty,
-                        k -> new AtomicInteger(0))
-                .incrementAndGet();
-    }
+    public void recordJoin() {joinedMatchCount.addAndGet(1);}
 
     /**
      * Make this update thread-safe.
@@ -77,10 +63,6 @@ public class MatchStatistics {
     public String buildStatusLine() {
         return "Server stats: "
                 + joinedMatchCount.get() + " joined, "
-                + completedMatchCount.get() + " completed.";
-    }
-
-    public void  recordJoin() {
-        joinedMatchCount.incrementAndGet();
+                + completedMatchCount.get() + " completed";
     }
 }

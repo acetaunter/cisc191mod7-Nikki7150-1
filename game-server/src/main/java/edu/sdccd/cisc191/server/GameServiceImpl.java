@@ -45,7 +45,7 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
         );
 
         matches.put(matchId, match);
-        statistics.recordJoin(difficulty, ranked);
+        statistics.recordJoin();
 
         JoinMatchResponse response = JoinMatchResponse.newBuilder()
                 .setMatchId(matchId)
@@ -81,7 +81,7 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
             boolean ranked
     ) {
         if (matchId == null || matchId.isBlank()) {
-            matchId = "No match";
+            return "No match";
         }
         if (playerName == null || playerName.isBlank()) {
             playerName = "Player";
@@ -92,7 +92,7 @@ public class GameServiceImpl extends GameServiceGrpc.GameServiceImplBase {
         if (difficulty == null || difficulty.isBlank()) {
             difficulty = "Normal";
         }
-        String matchType = ranked ? "Ranked" : "Casual";
+        String matchType = ranked ? "ranked" : "casual";
 
         return "Match " + matchId + ": "
                 + playerName + " vs "

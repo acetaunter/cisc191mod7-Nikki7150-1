@@ -83,4 +83,8 @@ public class GameGrpcClient {
     public void shutdown() {
         channel.shutdown();
     }
+
+    public Task<MatchResultResponse> playMatchTask(String matchId, String name) {
+        return null;
+    }
 }
